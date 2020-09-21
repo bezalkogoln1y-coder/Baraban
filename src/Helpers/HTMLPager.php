@@ -4,19 +4,24 @@ namespace Baraban\Helpers;
 
 class HTMLPager {
 
-   private static function generateCOOKIES($name = 'cookies') {
-      if (!file_exists(__DIR__ . "/../tmp")) {
-         mkdir('tmp', 0755, true);
+   const SRCPATH = __DIR__ . '/../';
+   const DIRCOOK = __DIR__ . '/../tmp/';
+
+   public static function generateCOOKIES($name = 'cookies') {
+
+      if (realpath(self::DIRCOOK) === false) {
+         mkdir(realpath(self::SRCPATH) . '/tmp', 0755, true);
       }
 
-      if (!file_exists(__DIR__ . "/../tmp/$name.txt")) {
-         echo '123';
-         fopen(__DIR__ . "/../tmp/$name.txt", 'w');
+      if (!file_exists(realpath(self::DIRCOOK) . "/$name.txt")) {
+         fopen(realpath(self::DIRCOOK) . "/$name.txt", 'w');
       }
    }
 
    public static function getHTML($url) {
-      self::generateCOOKIES();
+      $dirCook = realpath(self::DIRCOOK);
+      $nameCook = 'cookies';
+      self::generateCOOKIES($nameCook);
 
       //Инициализация cURL
       $ch = curl_init($url);
@@ -29,8 +34,8 @@ class HTMLPager {
       curl_setopt($ch, CURLOPT_COOKIESESSION, true);
 
       //Изменяемые опции cURL
-      curl_setopt($ch, CURLOPT_COOKIEJAR, __DIR__ . '/../tmp/cookies.txt');
-      curl_setopt($ch, CURLOPT_COOKIEFILE, __DIR__ . '/../tmp/cookies.txt');
+      curl_setopt($ch, CURLOPT_COOKIEJAR, $dirCook . "/$nameCook.txt");
+      curl_setopt($ch, CURLOPT_COOKIEFILE, $dirCook . "/$nameCook.txt");
       curl_setopt($ch, CURLOPT_NOBODY, false);
       curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36');
       curl_setopt($ch, CURLOPT_HEADER, false);
