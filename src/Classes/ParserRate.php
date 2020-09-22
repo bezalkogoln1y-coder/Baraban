@@ -4,28 +4,25 @@ namespace Baraban\Classes;
 
 use Baraban\Helpers\HTMLPager;
 use Baraban\Interfaces\ClassInterface;
+use Baraban\Configs\RateConfig;
 use phpQuery;
 
 class ParserRate implements ClassInterface {
    protected $config;
    protected $data;
 
-   public function __construct(array $customConfig = []) {
-      if (!empty($customConfig)) {
-         $this->config = $customConfig;
-      } else {
-         $this->config = [
-            'urlDonor' => 'https://www.coingecko.com/en/coins/bitcoin/rub',
-            'DOM' => '.col-lg-4 span[data-target="price.price"]'
-         ];
-      }
+   public function __construct(object $config) {
+      $this->config = [
+         'urlDonor' => $config->getConfig('rate')['urlDonor'],
+         'DOM' => $config->getConfig('rate')['DOM']
+      ];
    }
 
    private function getConfig() {
       return $this->config;
    }
 
-   private function parserCoin(string $coin = 'BTC') {
+   private function parserCoin() {
       $config = $this->getConfig();
       $html = HTMLPager::getHTML($config['urlDonor']);
       $pq = phpQuery::newDocument(HTMLPager::getHTML($config['urlDonor']));
